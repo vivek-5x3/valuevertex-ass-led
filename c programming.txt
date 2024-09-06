@@ -1,0 +1,70 @@
+
+#include <stdio.h>
+#include <stdbool.h>
+
+// Define LED settings structure
+typedef struct {
+    bool isOn;
+    int brightness;
+    int color;
+} LEDSettings;
+
+// Define LED group structure
+typedef struct {
+    char groupName[20];
+    int numLEDs;
+    LEDSettings *leds;
+} LEDGroup;
+
+// Initialize LED group settings
+void initLEDGroup(LEDGroup *group, const char *name, int numLEDs) {
+    group->groupName = name;
+    group->numLEDs = numLEDs;
+    group->leds = (LEDSettings *)malloc(numLEDs * sizeof(LEDSettings));
+    if (group->leds == NULL) {
+        printf("Memory allocation failed!\n");
+        exit(1);
+    }
+}
+
+// Update LED group settings
+void updateLEDGroupSettings(LEDGroup *group, int ledIndex, bool isOn, int brightness, int color) {
+    if (ledIndex >= 0 && ledIndex < group->numLEDs) {
+        group->leds[ledIndex].isOn = isOn;
+        group->leds[ledIndex].brightness = brightness;
+        group->leds[ledIndex].color = color;
+    } else {
+        printf("Invalid LED index!\n");
+    }
+}
+
+// Display LED group status
+void displayLEDGroupStatus(LEDGroup *group) {
+    printf("LED Group Name: %s\n", group->groupName);
+    printf("Number of LEDs: %d\n", group->numLEDs);
+    printf("\n");
+    for (int i = 0; i < group->numLEDs; i++) {
+        printf("LED %d:\n", i + 1);
+        printf("  - Is On: %s\n", group->leds[i].isOn ? "Yes" : "No");
+        printf("  - Brightness: %d\n", group->leds[i].brightness);
+        printf("  - Color: %d\n", group->leds[i].color);
+        printf("\n");
+    }
+}
+
+int main() {
+    LEDGroup myGroup;
+    initLEDGroup(&myGroup, "Living Room Lights", 4);
+
+    // Update LED settings
+    updateLEDGroupSettings(&myGroup, 0, true, 100, 1);
+    updateLEDGroupSettings(&myGroup, 2, false, 0, 0);
+
+    // Display LED group status
+    displayLEDGroupStatus(&myGroup);
+
+    // Free allocated memory
+    free(myGroup.leds);
+
+    return 0;
+}
